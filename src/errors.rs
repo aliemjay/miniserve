@@ -112,7 +112,7 @@ impl ResponseError for ContextualError {
 pub fn error_page_middleware<S, B>(
     req: S::Request,
     srv: &mut S,
-) -> LocalBoxFuture<'static, Result<S::Response, S::Error>>
+) -> impl Future<Output = Result<S::Response, S::Error>> + 'static
 where
     S: Service<Request = ServiceRequest, Response = ServiceResponse<B>, Error = actix_web::Error>,
     S::Future: 'static,
@@ -120,7 +120,7 @@ where
 {
     let fut = srv.call(req);
 
-    async {
+    async move {
         let res = fut.await?;
 
         if (res.status().is_client_error() || res.status().is_server_error())
@@ -140,7 +140,6 @@ where
             Ok(res)
         }
     }
-    .boxed_local()
 }
 
 fn map_error_page(req: &HttpRequest, head: &mut ResponseHead, error_msg: &str) -> String {
