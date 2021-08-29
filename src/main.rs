@@ -176,7 +176,7 @@ async fn run(miniserve_config: MiniserveConfig) -> Result<(), ContextualError> {
             .map(|url| Color::Green.paint(url).bold().to_string())
             .collect::<Vec<_>>();
 
-        urls.join(", ")
+        urls.join("\n\t")
     };
 
     let socket_addresses = miniserve_config
@@ -224,7 +224,7 @@ async fn run(miniserve_config: MiniserveConfig) -> Result<(), ContextualError> {
     let srv = srv.shutdown_timeout(0).run();
 
     println!(
-        "Serving path {path} at {addresses}",
+        "Serving path {path} at:\n\t{addresses}",
         path = Color::Yellow.paint(path_string).bold(),
         addresses = addresses,
     );
